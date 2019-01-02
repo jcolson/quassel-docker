@@ -4,7 +4,7 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:mamarley/quassel && \
     apt-get update && \
-    apt-get install -y quassel-core
+    apt-get install -y quassel-core libqt5sql5-psql
 
 EXPOSE 4242/tcp
 
