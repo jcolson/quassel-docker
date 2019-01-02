@@ -1,10 +1,54 @@
-FROM ubuntu:bionic
+FROM alpine:latest AS builder
 
-RUN apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:mamarley/quassel && \
-    apt-get update && \
-    apt-get install -y quassel-core libqt5sql5-psql
+RUN apk add --no-cache \
+  cmake \
+  curl \
+  dbus-dev \
+  g++ \
+  gcc \
+  git \
+  icu-dev \
+  icu-libs \
+  libressl \
+  libressl-dev \
+  openldap-dev \
+  make \
+  paxmark \
+  qt5-qtbase-dev \
+  qt5-qtscript-dev \
+  qt5-qtbase-postgresql \
+  qt5-qtbase-sqlite
+
+RUN mkdir /quassel && \
+    cd /quassel/ && \
+    git clone -b identd-listen-all --single-branch https://github.com/justjanne/quassel src
+RUN mkdir /quassel/build && \
+    cd /quassel/build && \
+    cmake \
+      -DCMAKE_INSTALL_PREFIX=/quassel/install \
+      -DCMAKE_BUILD_TYPE="Release" \
+      -DUSE_QT5=ON \
+      -DWITH_KDE=OFF \
+      -DWANT_QTCLIENT=OFF \
+      -DWANT_CORE=ON \
+      -DWANT_MONO=OFF \
+      /quassel/src
+RUN cd /quassel/build && \
+    make && \
+    make install && \
+     paxmark -m /quassel/install/bin/quasselcore
+
+FROM alpine:latest
+
+RUN apk add --no-cache \
+  icu-libs \
+  libressl \
+  qt5-qtbase \
+  qt5-qtscript \
+  qt5-qtbase-postgresql \
+  qt5-qtbase-sqlite
+
+COPY --from=builder /quassel/install/bin /usr/bin/
 
 EXPOSE 4242/tcp
 
