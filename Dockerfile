@@ -24,7 +24,7 @@ RUN mkdir /quassel && \
     git clone -b identd-listen-all --single-branch https://github.com/justjanne/quassel src
 RUN mkdir /quassel/build && \
     cd /quassel/build && \
-    cmake \
+    CXXFLAGS="-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fPIE -pie -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now" cmake \
       -DCMAKE_INSTALL_PREFIX=/quassel/install \
       -DCMAKE_BUILD_TYPE="Release" \
       -DUSE_QT5=ON \
