@@ -21,7 +21,9 @@ RUN apk add --no-cache \
 
 RUN mkdir /quassel && \
     cd /quassel/ && \
-    git clone -b identd-listen-all --single-branch https://github.com/justjanne/quassel src
+    git clone -b 0.13 --single-branch https://github.com/quassel/quassel src && \
+    cd /quassel/src/ && \
+    git checkout 0.13.1
 RUN mkdir /quassel/build && \
     cd /quassel/build && \
     CXXFLAGS="-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fPIE -pie -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now" cmake \
