@@ -1,4 +1,5 @@
-FROM alpine:latest AS builder
+ARG BASE=alpine:latest
+FROM $BASE AS builder
 
 RUN apk add --no-cache \
   cmake \
@@ -9,8 +10,8 @@ RUN apk add --no-cache \
   git \
   icu-dev \
   icu-libs \
-  libressl \
-  libressl-dev \
+  openssl \
+  openssl-dev \
   openldap-dev \
   make \
   paxmark \
@@ -38,13 +39,13 @@ RUN mkdir /quassel/build && \
 RUN cd /quassel/build && \
     make && \
     make install && \
-     paxmark -m /quassel/install/bin/quasselcore
+    paxmark -m /quassel/install/bin/quasselcore
 
-FROM alpine:latest
+FROM $BASE
 
 RUN apk add --no-cache \
   icu-libs \
-  libressl \
+  openssl \
   qt5-qtbase \
   qt5-qtscript \
   qt5-qtbase-postgresql \
@@ -52,7 +53,13 @@ RUN apk add --no-cache \
 
 COPY --from=builder /quassel/install/bin /usr/bin/
 
+RUN addgroup -g 1000 -S quassel && \
+    adduser -S -G quassel -u 1000 -s /bin/bash -h /quassel quassel
+USER quassel
+VOLUME /quassel/
+
 EXPOSE 4242/tcp
+EXPOSE 10113/tcp
 
 ENV DB_BACKEND="SQLite"
 ENV AUTH_AUTHENTICATOR="Database"
@@ -69,4 +76,4 @@ ENV AUTH_LDAP_BASE_DN=""
 ENV AUTH_LDAP_FILTER=""
 ENV AUTH_LDAP_UID_ATTRIBUTE="uid"
 
-ENTRYPOINT ["quasselcore", "--config-from-environment"]
+ENTRYPOINT ["quasselcore", "--configdir", "/quassel", "--config-from-environment"]
