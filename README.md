@@ -9,6 +9,16 @@ run it with `--entrypoint=/usr/bin/quasselcore` and make sure to include
 If you use the core in this mode, you’ll have to make sure `/quassel` is stored
 on a volume.
 
+Example usage:
+
+```bash
+docker run \
+  -v /path/to/quassel/volume:/quassel \
+  --entrypoint=/usr/bin/quasselcore \
+  k8r.eu/justjanne/quassel-docker:v0.13.1 \
+  --configdir /quassel
+```
+
 ## Stateless usage
 
 By default, the core will be run in stateless mode, where it needs to be
@@ -25,6 +35,40 @@ instead, these variables determine the connection details: `DB_PGSQL_USERNAME`,
 variables determine the connection details: `AUTH_LDAP_HOSTNAME`,
 `AUTH_LDAP_PORT`, `AUTH_LDAP_BIND_DN`, `AUTH_LDAP_BIND_PASSWORD`,
 `AUTH_LDAP_BASE_DN`, `AUTH_LDAP_FILTER`, `AUTH_LDAP_UID_ATTRIBUTE`.
+
+Minimal example with SQLite:
+
+```bash
+docker run \
+  -v /path/to/quassel/volume:/quassel \
+  -e DB_BACKEND=SQLite \
+  -e AUTH_AUTHENTICATOR=Database \
+  k8r.eu/justjanne/quassel-docker:v0.13.1
+```
+
+Full example with PostgreSQL and examples of other options:
+
+```bash
+docker run \
+  -v /path/to/certificates/tls.crt:/tls.crt \
+  -v /path/to/certificates/tls.key:/tls.key \
+  -e DB_BACKEND=PostgreSQL \
+  -e AUTH_AUTHENTICATOR=Database \
+  -e DB_PGSQL_USERNAME=quassel \
+  -e DB_PGSQL_PASSWORD=thesamecombinationasonmyluggage \
+  -e DB_PGSQL_HOSTNAME=postgresql.default.svc.cluster.local \
+  -e DB_PGSQL_PORT=5432 \
+  -e DB_PGSQL_DATABASE=quassel \
+  k8r.eu/justjanne/quassel-docker:v0.13.1 \
+  --config-from-environment \
+  --strict-ident \
+  --ident-daemon \
+  --ident-port "10113" \
+  --ident-listen "::,0.0.0.0" \
+  --ssl-cert /tls.crt \
+  --ssl-key /tls.key \
+  --require-ssl
+```
 
 ## SSL
 
