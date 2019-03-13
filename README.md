@@ -1,5 +1,13 @@
 # Dockerimage for Quasselcore
 
+## Supported architectures
+
+| Architecture | Tags                        |
+| ------------ | --------------------------- |
+| x86-64       | `0.13.1`, `latest`          |
+| aarch64      | `0.13.1-aarch64`, `aarch64` |
+| armhf        | `0.13.1-armhf`, `armhf`     |
+
 ## Stateful usage (with UI Wizard)
 
 By default, the core will be run in stateful mode.
