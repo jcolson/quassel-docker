@@ -80,7 +80,9 @@ Per default, the container will listen on the port 4242 for connections.
 This can be configured with `--port` and `--listen`.
 
 If the `--ident-daemon` argument is passed, the ident daemon will additionally
-listen on 10113. You can configure this with `--ident-port`.  
+listen on 10113. You can configure this with `--ident-port`.
 This by default only listens on localhost, which obviously will cause issues
 when used in a container like this, so make sure to add the
-`--ident-listen ::,0.0.0.0` argument.
+`--ident-listen ::,0.0.0.0` argument.  
+You’ll also want to bind this to port 113 on the host, as IRC networks will
+expect to find the ident daemon on that port.
