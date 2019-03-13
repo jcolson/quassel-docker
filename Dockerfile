@@ -76,4 +76,4 @@ ENV AUTH_LDAP_BASE_DN=""
 ENV AUTH_LDAP_FILTER=""
 ENV AUTH_LDAP_UID_ATTRIBUTE="uid"
 
-ENTRYPOINT ["quasselcore", "--configdir", "/config", "--config-from-environment"]
+ENTRYPOINT ["quasselcore", "--configdir", "/config"]

@@ -2,9 +2,7 @@
 
 ## Stateful usage (with UI Wizard)
 
-To use Quassel statefully (which allows you to configure the core on first use)
-run it with `--entrypoint=/usr/bin/quasselcore` and make sure to include
-`--configdir /config` as argument.
+By default, the core will be run in stateful mode.
 
 If you use the core in this mode, you’ll have to make sure `/config` is stored
 on a volume.
@@ -14,15 +12,13 @@ Example usage:
 ```bash
 docker run \
   -v /path/to/quassel/volume:/config \
-  --entrypoint=/usr/bin/quasselcore \
-  k8r.eu/justjanne/quassel-docker:v0.13.1 \
-  --configdir /quassel
+  k8r.eu/justjanne/quassel-docker:v0.13.1
 ```
 
 ## Stateless usage
 
-By default, the core will be run in stateless mode, where it needs to be
-configured through environment arguments.
+To use Quassel in stateless mode, where it needs to be configured through
+environment arguments, run it with the `--config-from-environment` argument.
 
 `DB_BACKEND` defines the backend used for the database, this can be `SQLite` or
 `PostgreSQL`. In case `SQLite` is used, the database will be stored in
@@ -43,7 +39,8 @@ docker run \
   -v /path/to/quassel/volume:/config \
   -e DB_BACKEND=SQLite \
   -e AUTH_AUTHENTICATOR=Database \
-  k8r.eu/justjanne/quassel-docker:v0.13.1
+  k8r.eu/justjanne/quassel-docker:v0.13.1 \
+  --config-from-environment
 ```
 
 Full example with PostgreSQL and examples of other options:
