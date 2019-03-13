@@ -22,9 +22,18 @@ build_arm32v6: Dockerfile
 
 .PHONY: push
 push: push_x86 push_arm64v8 push_arm32v6
+
+.PHONY: push_x86
+push_x86: build_x86
 	docker push $(NAME):$(QUASSEL_VERSION)
 	docker push $(NAME):latest
+
+.PHONY: push_arm64v8
+push_arm64v8: build_arm64v8
 	docker push $(NAME):$(QUASSEL_VERSION)-arm64v8
 	docker push $(NAME):arm64v8
+
+.PHONY: push_arm32v6
+push_arm32v6: build_arm32v6
 	docker push $(NAME):$(QUASSEL_VERSION)-arm32v6
 	docker push $(NAME):arm32v6
