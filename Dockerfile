@@ -54,9 +54,9 @@ RUN apk add --no-cache \
 COPY --from=builder /quassel/install/bin /usr/bin/
 
 RUN addgroup -g 1000 -S quassel && \
-    adduser -S -G quassel -u 1000 -s /bin/bash -h /quassel quassel
+    adduser -S -G quassel -u 1000 -s /bin/bash -h /config quassel
 USER quassel
-VOLUME /quassel/
+VOLUME /config
 
 EXPOSE 4242/tcp
 EXPOSE 10113/tcp
@@ -76,4 +76,4 @@ ENV AUTH_LDAP_BASE_DN=""
 ENV AUTH_LDAP_FILTER=""
 ENV AUTH_LDAP_UID_ATTRIBUTE="uid"
 
-ENTRYPOINT ["quasselcore", "--configdir", "/quassel", "--config-from-environment"]
+ENTRYPOINT ["quasselcore", "--configdir", "/config", "--config-from-environment"]

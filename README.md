@@ -4,16 +4,16 @@
 
 To use Quassel statefully (which allows you to configure the core on first use)
 run it with `--entrypoint=/usr/bin/quasselcore` and make sure to include
-`--configdir /quassel` as argument.
+`--configdir /config` as argument.
 
-If you use the core in this mode, you’ll have to make sure `/quassel` is stored
+If you use the core in this mode, you’ll have to make sure `/config` is stored
 on a volume.
 
 Example usage:
 
 ```bash
 docker run \
-  -v /path/to/quassel/volume:/quassel \
+  -v /path/to/quassel/volume:/config \
   --entrypoint=/usr/bin/quasselcore \
   k8r.eu/justjanne/quassel-docker:v0.13.1 \
   --configdir /quassel
@@ -40,7 +40,7 @@ Minimal example with SQLite:
 
 ```bash
 docker run \
-  -v /path/to/quassel/volume:/quassel \
+  -v /path/to/quassel/volume:/config \
   -e DB_BACKEND=SQLite \
   -e AUTH_AUTHENTICATOR=Database \
   k8r.eu/justjanne/quassel-docker:v0.13.1
@@ -74,7 +74,7 @@ docker run \
 
 You can use the core with SSL, in this case you should either put a
 `quasselCert.pem` file with the full certificate chain and private key into
-the `/quassel` volume, or you can use the `--ssl-cert` and `--ssl-key`
+the `/config` volume, or you can use the `--ssl-cert` and `--ssl-key`
 arguments to use separate key and certificate.
 
 ## Ports
