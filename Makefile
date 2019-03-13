@@ -6,37 +6,37 @@ ALPINE_VERSION=3.9
 all: push
 
 .PHONY: build
-build: build_x86 build_arm64v8 build_arm32v7
+build: build_x86 build_aarch64 build_armhf
 
 .PHONY: build_x86
 build_x86: Dockerfile
 	docker build -t $(NAME):$(QUASSEL_VERSION) --build-arg BASE=alpine:$(ALPINE_VERSION) .
 	docker tag $(NAME):$(QUASSEL_VERSION) $(NAME):latest
 
-.PHONY: build_arm64v8
-build_arm64v8: Dockerfile
-	docker build -t $(NAME):$(QUASSEL_VERSION)-arm64v8 --build-arg BASE=multiarch/alpine:aarch64-v$(ALPINE_VERSION) .
-	docker tag $(NAME):$(QUASSEL_VERSION)-arm64v8 $(NAME):arm64v8
+.PHONY: build_aarch64
+build_aarch64: Dockerfile
+	docker build -t $(NAME):$(QUASSEL_VERSION)-aarch64 --build-arg BASE=multiarch/alpine:aarch64-v$(ALPINE_VERSION) .
+	docker tag $(NAME):$(QUASSEL_VERSION)-aarch64 $(NAME):aarch64
 
-.PHONY: build_arm32v7
+.PHONY: build_armhf
 build_arm32v6: Dockerfile
-	docker build -t $(NAME):$(QUASSEL_VERSION)-arm32v7 --build-arg BASE=multiarch/alpine:armhf-v$(ALPINE_VERSION) .
-	docker tag $(NAME):$(QUASSEL_VERSION)-arm32v7 $(NAME):arm32v7
+	docker build -t $(NAME):$(QUASSEL_VERSION)-armhf --build-arg BASE=multiarch/alpine:armhf-v$(ALPINE_VERSION) .
+	docker tag $(NAME):$(QUASSEL_VERSION)-armhf $(NAME):armhf
 
 .PHONY: push
-push: push_x86 push_arm64v8 push_arm32v6
+push: push_x86 push_aarch64 push_arm32v6
 
 .PHONY: push_x86
 push_x86: build_x86
 	docker push $(NAME):$(QUASSEL_VERSION)
 	docker push $(NAME):latest
 
-.PHONY: push_arm64v8
-push_arm64v8: build_arm64v8
-	docker push $(NAME):$(QUASSEL_VERSION)-arm64v8
-	docker push $(NAME):arm64v8
+.PHONY: push_aarch64
+push_aarch64: build_aarch64
+	docker push $(NAME):$(QUASSEL_VERSION)-aarch64
+	docker push $(NAME):aarch64
 
 .PHONY: push_arm32v6
-push_arm32v6: build_arm32v7
-	docker push $(NAME):$(QUASSEL_VERSION)-arm32v7
-	docker push $(NAME):arm32v7
+push_arm32v6: build_armhf
+	docker push $(NAME):$(QUASSEL_VERSION)-armhf
+	docker push $(NAME):armhf
