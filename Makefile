@@ -19,12 +19,12 @@ build_aarch64: Dockerfile
 	docker tag $(NAME):$(QUASSEL_VERSION)-aarch64 $(NAME):aarch64
 
 .PHONY: build_armhf
-build_arm32v6: Dockerfile
+build_armhf: Dockerfile
 	docker build -t $(NAME):$(QUASSEL_VERSION)-armhf --build-arg BASE=multiarch/alpine:armhf-v$(ALPINE_VERSION) .
 	docker tag $(NAME):$(QUASSEL_VERSION)-armhf $(NAME):armhf
 
 .PHONY: push
-push: push_x86 push_aarch64 push_arm32v6
+push: push_x86 push_aarch64 push_armhf
 
 .PHONY: push_x86
 push_x86: build_x86
@@ -36,7 +36,7 @@ push_aarch64: build_aarch64
 	docker push $(NAME):$(QUASSEL_VERSION)-aarch64
 	docker push $(NAME):aarch64
 
-.PHONY: push_arm32v6
-push_arm32v6: build_armhf
+.PHONY: push_armhf
+push_armhf: build_armhf
 	docker push $(NAME):$(QUASSEL_VERSION)-armhf
 	docker push $(NAME):armhf
