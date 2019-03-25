@@ -10,8 +10,8 @@ RUN apk add --no-cache \
   git \
   icu-dev \
   icu-libs \
-  openssl \
-  openssl-dev \
+  libressl \
+  libressl-dev \
   openldap-dev \
   make \
   paxmark \
@@ -45,7 +45,7 @@ FROM $BASE
 
 RUN apk add --no-cache \
   icu-libs \
-  openssl \
+  libressl \
   qt5-qtbase \
   qt5-qtscript \
   qt5-qtbase-postgresql \
