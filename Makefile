@@ -1,6 +1,6 @@
 NAME=k8r.eu/justjanne/quassel-docker
 QUASSEL_VERSION=v0.13.1
-ALPINE_VERSION=3.9
+ALPINE_VERSION=3.10
 
 .PHONY: all
 all: push
