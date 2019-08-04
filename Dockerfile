@@ -1,6 +1,8 @@
+# development image
 ARG BASE=alpine:latest
 FROM $BASE AS builder
 
+# install development dependencies
 RUN apk add --no-cache \
   cmake \
   curl \
@@ -13,21 +15,25 @@ RUN apk add --no-cache \
   libressl \
   libressl-dev \
   openldap-dev \
-  make \
+  ninja \
   paxmark \
   qt5-qtbase-dev \
   qt5-qtscript-dev \
   qt5-qtbase-postgresql \
   qt5-qtbase-sqlite
 
+# setup repo
 RUN mkdir /quassel && \
-    cd /quassel/ && \
-    git clone -b 0.13 --single-branch https://github.com/quassel/quassel src && \
-    cd /quassel/src/ && \
+    git clone -b 0.13 --single-branch https://github.com/quassel/quassel /quassel/src && \
+    cd /quassel/src && \
     git checkout 0.13.1
+
+# generate build files
 RUN mkdir /quassel/build && \
     cd /quassel/build && \
-    CXXFLAGS="-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fPIE -pie -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now" cmake \
+    CXXFLAGS="-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fPIE -pie -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now" \
+    cmake \
+      -GNinja \
       -DCMAKE_INSTALL_PREFIX=/quassel/install \
       -DCMAKE_BUILD_TYPE="Release" \
       -DUSE_QT5=ON \
@@ -36,31 +42,40 @@ RUN mkdir /quassel/build && \
       -DWANT_CORE=ON \
       -DWANT_MONO=OFF \
       /quassel/src
+
+# build binaries
 RUN cd /quassel/build && \
-    make && \
-    make install && \
+    ninja && \
+    ninja install && \
     paxmark -m /quassel/install/bin/quasselcore
 
+# runtime image
 FROM $BASE
 
+# install runtime dependencies
 RUN apk add --no-cache \
   icu-libs \
   libressl \
+  openldap \
   qt5-qtbase \
   qt5-qtscript \
   qt5-qtbase-postgresql \
   qt5-qtbase-sqlite
 
+# copy binaries
 COPY --from=builder /quassel/install/bin /usr/bin/
 
+# setup user environment
 RUN addgroup -g 1000 -S quassel && \
     adduser -S -G quassel -u 1000 -s /bin/bash -h /config quassel
 USER quassel
 VOLUME /config
 
+# expose ports
 EXPOSE 4242/tcp
 EXPOSE 10113/tcp
 
+# setup default configuration
 ENV DB_BACKEND="SQLite"
 ENV AUTH_AUTHENTICATOR="Database"
 ENV DB_PGSQL_USERNAME="quassel"
