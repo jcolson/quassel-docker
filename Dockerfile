@@ -74,7 +74,7 @@ COPY --from=builder /quassel/install/bin /usr/bin/
 
 # setup user environment
 RUN addgroup -g 1000 -S quassel && \
-    adduser -S -G quassel -u 1000 -s /bin/bash -h /config quassel
+    adduser -S -G quassel -u 1000 -s /bin/sh -h /config quassel
 USER quassel
 VOLUME /config
 
