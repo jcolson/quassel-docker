@@ -17,16 +17,22 @@ RUN apk add --no-cache \
   openldap-dev \
   ninja \
   paxmark \
+  boost-dev \
   qt5-qtbase-dev \
   qt5-qtscript-dev \
   qt5-qtbase-postgresql \
   qt5-qtbase-sqlite
 
+ARG QUASSEL_VERSION=""
+ARG QUASSEL_BRANCH="master"
+
 # setup repo
 RUN mkdir /quassel && \
-    git clone -b 0.13 --single-branch https://github.com/quassel/quassel /quassel/src && \
+    git clone -b "$QUASSEL_BRANCH" --single-branch https://github.com/quassel/quassel /quassel/src && \
     cd /quassel/src && \
-    git checkout 0.13.1
+    if [ ! -z "$QUASSEL_VERSION"]; then \
+      git checkout $QUASSEL_VERSION; \
+    fi
 
 # generate build files
 RUN mkdir /quassel/build && \
@@ -56,7 +62,8 @@ FROM $BASE
 RUN apk add --no-cache \
   icu-libs \
   libressl \
-  openldap \
+  libldap \
+  boost \
   qt5-qtbase \
   qt5-qtscript \
   qt5-qtbase-postgresql \
