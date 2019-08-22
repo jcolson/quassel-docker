@@ -30,8 +30,8 @@ environment arguments, run it with the `--config-from-environment` argument.
 
 `DB_BACKEND` defines the backend used for the database, this can be `SQLite` or
 `PostgreSQL`. In case `SQLite` is used, the database will be stored in
-`/root/.config/quassel-irc.org/quassel-storage.sqlite`. If `PostgreSQL` is used
-instead, these variables determine the connection details: `DB_PGSQL_USERNAME`,
+`/config/quassel-storage.sqlite`. If `PostgreSQL` is used instead, these
+variables determine the connection details: `DB_PGSQL_USERNAME`,
 `DB_PGSQL_PASSWORD`, `DB_PGSQL_HOSTNAME`, `DB_PGSQL_PORT`, `DB_PGSQL_DATABASE`.
 
 `AUTH_AUTHENTICATOR` defines the backend used for authentication, this can be
