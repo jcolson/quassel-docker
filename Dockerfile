@@ -30,7 +30,7 @@ ARG QUASSEL_BRANCH="master"
 RUN mkdir /quassel && \
     git clone -b "$QUASSEL_BRANCH" --single-branch https://github.com/quassel/quassel /quassel/src && \
     cd /quassel/src && \
-    if [ ! -z "$QUASSEL_VERSION"]; then \
+    if [ ! -z "$QUASSEL_VERSION" ]; then \
       git checkout $QUASSEL_VERSION; \
     fi
 
@@ -60,6 +60,7 @@ FROM $BASE
 
 # install runtime dependencies
 RUN apk add --no-cache \
+  bash \
   icu-libs \
   libressl \
   libldap \
@@ -82,20 +83,92 @@ VOLUME /config
 EXPOSE 4242/tcp
 EXPOSE 10113/tcp
 
-# setup default configuration
+# Specify the directory holding configuration files, the SQlite database and the SSL certificate.
+ENV CONFIG_DIR="/config"
+
+# The address(es) quasselcore will listen on.
+ENV QUASSEL_LISTEN="::,0.0.0.0"
+# The port quasselcore will listen at.
+ENV QUASSEL_PORT="4242"
+
+# Don't restore last core's state.
+ENV NORESTORE="false"
+
+# Use users' quasselcore username as ident reply. Ignores each user's configured ident setting.
+ENV STRICT_IDENT="false"
+
+# Enable internal ident daemon.
+ENV IDENT_ENABLED="false"
+# The address(es) quasselcore will listen on for ident requests. Same format as --listen.
+ENV IDENT_LISTEN="::1,127.0.0.1"
+# The port quasselcore will listen at for ident requests. Only meaningful with --ident-daemon.
+ENV IDENT_PORT="10113"
+
+# Enable oidentd integration. In most cases you should also enable --strict-ident.
+ENV OIDENTD_ENABLED="false"
+# Set path to oidentd configuration file.
+ENV OIDENTD_CONF_FILE=""
+
+# Require SSL for remote (non-loopback) client connections.
+ENV SSL_REQUIRED="false"
+# Specify the path to the SSL certificate.
+ENV SSL_CERT_FILE=""
+# Specify the path to the SSL key.
+ENV SSL_KEY_FILE=""
+
+# Enable metrics API.
+ENV METRICS_ENABLED="false"
+# The address(es) quasselcore will listen on for metrics requests. Same format as --listen.
+ENV METRICS_LISTEN="::1,127.0.0.1"
+# The port quasselcore will listen at for metrics requests. Only meaningful with --metrics-daemon.
+ENV METRICS_PORT="9558"
+
+# Supports one of Debug|Info|Warning|Error; default is Info.
+ENV LOGLEVEL="Info"
+
+# Enable logging of all SQL queries to debug log, also sets --loglevel Debug automatically
+ENV DEBUG_ENABLED="false"
+# Enable logging of all raw IRC messages to debug log, including passwords!  In most cases you should also set --loglevel Debug
+ENV DEBUG_IRC_ENABLED="false"
+# Limit raw IRC logging to this network ID.  Implies --debug-irc
+ENV DEBUG_IRC_ID=""
+# Enable logging of all parsed IRC messages to debug log, including passwords!  In most cases you should also set --loglevel Debug
+ENV DEBUG_IRC_PARSED_ENABLED="false"
+# Limit parsed IRC logging to this network ID.  Implies --debug-irc-parsed
+ENV DEBUG_IRC_PARSED_ID=""
+
+# Load configuration from environment variables.
+ENV CONFIG_FROM_ENVIRONMENT="true"
+
+# Specify the database backend.  Allowed values: SQLite or PostgreSQL
 ENV DB_BACKEND="SQLite"
-ENV AUTH_AUTHENTICATOR="Database"
+# If the backend is PostgreSQL, specify the database user username
 ENV DB_PGSQL_USERNAME="quassel"
+# If the backend is PostgreSQL, specify the database user password
 ENV DB_PGSQL_PASSWORD=""
+# If the backend is PostgreSQL, specify the hostname of the database
 ENV DB_PGSQL_HOSTNAME="localhost"
+# If the backend is PostgreSQL, specify the port of the database
 ENV DB_PGSQL_PORT="5432"
+# If the backend is PostgreSQL, specify the database of the PostgreSQL cluster
 ENV DB_PGSQL_DATABASE="quassel"
+
+# Specify the authenticator backend.  Allowed values: Database or Ldap
+ENV AUTH_AUTHENTICATOR="Database"
+# If the authenticator is Ldap, specify the hostname of the directory server
 ENV AUTH_LDAP_HOSTNAME="ldap://localhost"
+# If the authenticator is Ldap, specify the port of the directory server
 ENV AUTH_LDAP_PORT="389"
+# If the authenticator is Ldap, specify the bind dn
 ENV AUTH_LDAP_BIND_DN=""
+# If the authenticator is Ldap, specify the bind password
 ENV AUTH_LDAP_BIND_PASSWORD=""
+# If the authenticator is Ldap, specify the base dn
 ENV AUTH_LDAP_BASE_DN=""
+# If the authenticator is Ldap, specify the filter query
 ENV AUTH_LDAP_FILTER=""
+# If the authenticator is Ldap, specify the attribute to be used as userid
 ENV AUTH_LDAP_UID_ATTRIBUTE="uid"
 
-ENTRYPOINT ["quasselcore", "--configdir", "/config"]
+ADD docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
