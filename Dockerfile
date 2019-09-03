@@ -54,6 +54,9 @@ RUN cd /quassel/build && \
     ninja && \
     ninja install && \
     paxmark -m /quassel/install/bin/quasselcore
+    
+# generate empty directory so docker doesn’t break
+RUN mkdir -p /quassel/install/lib_fix_docker_copy
 
 # runtime image
 FROM $BASE
@@ -72,6 +75,7 @@ RUN apk add --no-cache \
 
 # copy binaries
 COPY --from=builder /quassel/install/bin /usr/bin/
+COPY --from=builder /quassel/install/lib* /usr/lib/
 
 # setup user environment
 RUN addgroup -g 1000 -S quassel && \
