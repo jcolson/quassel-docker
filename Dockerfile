@@ -138,7 +138,7 @@ ENV DEBUG_IRC_PARSED_ENABLED="false"
 ENV DEBUG_IRC_PARSED_ID=""
 
 # Load configuration from environment variables.
-ENV CONFIG_FROM_ENVIRONMENT="true"
+ENV CONFIG_FROM_ENVIRONMENT="false"
 
 # Specify the database backend.  Allowed values: SQLite or PostgreSQL
 ENV DB_BACKEND="SQLite"

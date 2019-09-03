@@ -149,7 +149,7 @@ Limit parsed IRC logging to this network ID.  Implies
 
 Load configuration from environment variables.
 
-Default: `true`
+Default: `false`
 
 ### DB_BACKEND
 
