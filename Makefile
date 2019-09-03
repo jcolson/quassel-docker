@@ -1,6 +1,7 @@
 NAME=k8r.eu/justjanne/quassel-docker
 ALPINE_VERSION=3.10
 QUASSEL_VERSION=
+QUASSEL_BRANCH=master
 ifeq ($(strip $(QUASSEL_VERSION)),)
 IMAGE_VERSION=trunk
 else
