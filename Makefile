@@ -2,6 +2,7 @@ NAME=k8r.eu/justjanne/quassel-docker
 ALPINE_VERSION=3.10
 QUASSEL_VERSION=
 QUASSEL_BRANCH=master
+QUASSEL_REPO=https://github.com/quassel/quassel
 ifeq ($(strip $(QUASSEL_VERSION)),)
 IMAGE_VERSION=trunk
 else
@@ -21,6 +22,7 @@ build_x86: Dockerfile
 		--build-arg BASE=alpine:$(ALPINE_VERSION) \
 		--build-arg QUASSEL_VERSION=$(QUASSEL_VERSION) \
 		--build-arg QUASSEL_BRANCH=$(QUASSEL_BRANCH) \
+		--build-arg QUASSEL_REPO=$(QUASSEL_REPO) \
 		.
 	if [ ! -z "$(QUASSEL_VERSION)" ]; then docker tag $(NAME):$(IMAGE_VERSION) $(NAME):latest; fi
 
@@ -31,6 +33,7 @@ build_aarch64: Dockerfile
 		--build-arg BASE=multiarch/alpine:aarch64-v$(ALPINE_VERSION) \
 		--build-arg QUASSEL_VERSION=$(QUASSEL_VERSION) \
 		--build-arg QUASSEL_BRANCH=$(QUASSEL_BRANCH) \
+		--build-arg QUASSEL_REPO=$(QUASSEL_REPO) \
 		.
 	if [ ! -z "$(QUASSEL_VERSION)" ]; then docker tag $(NAME):$(IMAGE_VERSION)-aarch64 $(NAME):aarch64; fi
 
@@ -41,6 +44,7 @@ build_armhf: Dockerfile
 		--build-arg BASE=multiarch/alpine:armhf-v$(ALPINE_VERSION) \
 		--build-arg QUASSEL_VERSION=$(QUASSEL_VERSION) \
 		--build-arg QUASSEL_BRANCH=$(QUASSEL_BRANCH) \
+		--build-arg QUASSEL_REPO=$(QUASSEL_REPO) \
 		.
 	if [ ! -z "$(QUASSEL_VERSION)" ]; then docker tag $(NAME):$(IMAGE_VERSION)-armhf $(NAME):armhf; fi
 

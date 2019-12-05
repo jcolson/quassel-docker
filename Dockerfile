@@ -25,10 +25,11 @@ RUN apk add --no-cache \
 
 ARG QUASSEL_VERSION=""
 ARG QUASSEL_BRANCH="master"
+ARG QUASSEL_REPO="https://github.com/quassel/quassel"
 
 # setup repo
 RUN mkdir /quassel && \
-    git clone -b "$QUASSEL_BRANCH" --single-branch https://github.com/quassel/quassel /quassel/src && \
+    git clone -b "$QUASSEL_BRANCH" --single-branch "$QUASSEL_REPO" /quassel/src && \
     cd /quassel/src && \
     if [ ! -z "$QUASSEL_VERSION" ]; then \
       git checkout $QUASSEL_VERSION; \
