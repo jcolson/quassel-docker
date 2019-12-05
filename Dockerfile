@@ -10,8 +10,6 @@ RUN apk add --no-cache \
   g++ \
   gcc \
   git \
-  icu-dev \
-  icu-libs \
   libressl \
   libressl-dev \
   openldap-dev \
@@ -19,13 +17,16 @@ RUN apk add --no-cache \
   paxmark \
   boost-dev \
   qt5-qtbase-dev \
-  qt5-qtscript-dev \
   qt5-qtbase-postgresql \
   qt5-qtbase-sqlite
 
 ARG QUASSEL_VERSION=""
 ARG QUASSEL_BRANCH="master"
 ARG QUASSEL_REPO="https://github.com/quassel/quassel"
+
+RUN if [ "$QUASSEL_BRANCH" = "0.13" ]; then \
+      apk add --no-cache qt5-qtscript-dev; \
+    fi
 
 # setup repo
 RUN mkdir /quassel && \
@@ -65,14 +66,16 @@ FROM $BASE
 # install runtime dependencies
 RUN apk add --no-cache \
   bash \
-  icu-libs \
+  boost \
   libressl \
   libldap \
-  boost \
   qt5-qtbase \
-  qt5-qtscript \
   qt5-qtbase-postgresql \
   qt5-qtbase-sqlite
+
+RUN if [ "$QUASSEL_BRANCH" = "0.13" ]; then \
+      apk add --no-cache qt5-qtscript; \
+    fi
 
 # copy binaries
 COPY --from=builder /quassel/install/bin /usr/bin/
