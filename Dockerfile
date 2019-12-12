@@ -178,5 +178,5 @@ ENV AUTH_LDAP_FILTER=""
 # If the authenticator is Ldap, specify the attribute to be used as userid
 ENV AUTH_LDAP_UID_ATTRIBUTE="uid"
 
-ADD docker-entrypoint.sh /
+ADD src/docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
