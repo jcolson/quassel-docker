@@ -18,6 +18,7 @@ build: build_x86 build_aarch64 build_armhf
 .PHONY: build_x86
 build_x86: Dockerfile
 	docker build \
+		--pull \
 		-t $(NAME):$(IMAGE_VERSION) \
 		--build-arg BASE=alpine:$(ALPINE_VERSION) \
 		--build-arg QUASSEL_VERSION=$(QUASSEL_VERSION) \
@@ -29,6 +30,7 @@ build_x86: Dockerfile
 .PHONY: build_aarch64
 build_aarch64: Dockerfile
 	docker build \
+		--pull \
 		-t $(NAME):$(IMAGE_VERSION)-aarch64 \
 		--build-arg BASE=multiarch/alpine:aarch64-v$(ALPINE_VERSION) \
 		--build-arg QUASSEL_VERSION=$(QUASSEL_VERSION) \
@@ -40,6 +42,7 @@ build_aarch64: Dockerfile
 .PHONY: build_armhf
 build_armhf: Dockerfile
 	docker build \
+		--pull \
 		-t $(NAME):$(IMAGE_VERSION)-armhf \
 		--build-arg BASE=multiarch/alpine:armhf-v$(ALPINE_VERSION) \
 		--build-arg QUASSEL_VERSION=$(QUASSEL_VERSION) \
