@@ -73,6 +73,10 @@ RUN apk add --no-cache \
   qt5-qtbase-postgresql \
   qt5-qtbase-sqlite
 
+ARG QUASSEL_VERSION="0.13.1"
+ARG QUASSEL_BRANCH="0.13"
+ARG QUASSEL_REPO="https://github.com/quassel/quassel"
+
 RUN if [ "$QUASSEL_BRANCH" = "0.13" ]; then \
       apk add --no-cache qt5-qtscript; \
     fi
