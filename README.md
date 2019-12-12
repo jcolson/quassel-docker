@@ -280,6 +280,10 @@ docker run \
   k8r.eu/justjanne/quassel-docker:v0.13.1
 ```
 
+## Kubernetes
+
+You can find a demo configuration file for kubernetes in [kubernetes-template.yaml](kubernetes-template.yaml)
+
 ## SSL
 
 You can use the core with SSL, in this case you should either put a
