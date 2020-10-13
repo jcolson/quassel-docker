@@ -75,7 +75,8 @@ RUN apk add --no-cache \
   libldap \
   qt5-qtbase \
   qt5-qtbase-postgresql \
-  qt5-qtbase-sqlite
+  qt5-qtbase-sqlite \
+  qca-dev
 
 # ARG QUASSEL_VERSION="0.13.1"
 ARG QUASSEL_BRANCH="bug_ircserver_password_column"
