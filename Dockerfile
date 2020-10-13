@@ -4,6 +4,7 @@ FROM $BASE AS builder
 
 # install development dependencies
 RUN apk add --no-cache \
+  make \
   cmake \
   curl \
   dbus-dev \
@@ -18,17 +19,20 @@ RUN apk add --no-cache \
   boost-dev \
   qt5-qtbase-dev \
   qt5-qtbase-postgresql \
-  qt5-qtbase-sqlite
+  qt5-qtbase-sqlite \
+  qca-dev
 
 # ARG QUASSEL_VERSION="0.13.1"
-ARG QUASSEL_BRANCH="bug_ircserver_password_column"
+ARG QUASSEL_BRANCH="20201013master+column"
+# ARG QUASSEL_BRANCH="0.13"
 ARG QUASSEL_REPO="https://github.com/jcolson/quassel"
+# ARG QUASSEL_REPO="https://github.com/quassel/quassel"
 
-RUN if [ "$QUASSEL_BRANCH" = "0.13" ]; then \
+RUN if [ "$QUASSEL_BRANCH" = "0.13" ] || [ "$QUASSEL_BRANCH" = "20201013master+column" ]; then \
       apk add --no-cache qt5-qtscript-dev; \
     fi
 
-# setup repo
+# setup repo 
 RUN mkdir /quassel && \
     git clone -b "$QUASSEL_BRANCH" --single-branch "$QUASSEL_REPO" /quassel/src && \
     cd /quassel/src && \
@@ -36,12 +40,11 @@ RUN mkdir /quassel && \
       git checkout $QUASSEL_VERSION; \
     fi
 
-# generate build files
+# generate build files       -GNinja \
 RUN mkdir /quassel/build && \
     cd /quassel/build && \
     CXXFLAGS="-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fPIE -pie -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now" \
     cmake \
-      -GNinja \
       -DCMAKE_INSTALL_PREFIX=/quassel/install \
       -DCMAKE_BUILD_TYPE="Release" \
       -DUSE_QT5=ON \
@@ -49,12 +52,13 @@ RUN mkdir /quassel/build && \
       -DWANT_QTCLIENT=OFF \
       -DWANT_CORE=ON \
       -DWANT_MONO=OFF \
+      -DWITH_CRYPT=ON \
       /quassel/src
 
-# build binaries
+# build binaries - ninja
 RUN cd /quassel/build && \
-    ninja && \
-    ninja install && \
+    make && \
+    make install && \
     paxmark -m /quassel/install/bin/quasselcore
     
 # generate empty directory so docker doesn’t break
